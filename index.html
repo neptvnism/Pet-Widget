@@ -46,26 +46,31 @@
         <div class="stats">
             <div>Hunger: <span id="hunger">5</span></div>
             <div>Happiness: <span id="happiness">5</span></div>
+            <div>Health: <span id="health">5</span></div>
         </div>
         <div class="buttons">
             <button onclick="feed()">Feed</button>
             <button onclick="play()">Play</button>
+            <button onclick="sleep()">Sleep</button>
         </div>
     </div>
 
     <script>
         let hunger = 5;
         let happiness = 5;
+        let health = 5;
 
         function updateStats() {
             document.getElementById('hunger').innerText = hunger;
             document.getElementById('happiness').innerText = happiness;
+            document.getElementById('health').innerText = health;
             updateEmoji();
         }
 
         function feed() {
             if (hunger > 0) {
                 hunger--;
+                health = Math.min(10, health + 1); // Increase health slightly
                 updateStats();
             } else {
                 alert("Your Tamaemoji is not hungry!");
@@ -75,20 +80,30 @@
         function play() {
             if (happiness < 10) {
                 happiness++;
+                health = Math.min(10, health + 1); // Increase health slightly
                 updateStats();
             } else {
                 alert("Your Tamaemoji is already very happy!");
             }
         }
 
+        function sleep() {
+            happiness = Math.min(10, happiness + 2); // Increase happiness slightly
+            hunger = Math.min(10, hunger + 1); // Increase hunger slightly
+            health = Math.min(10, health + 1); // Increase health slightly
+            updateStats();
+        }
+
         function updateEmoji() {
             const emoji = document.getElementById('emoji');
-            if (happiness >= 7 && hunger <= 3) {
+            if (happiness >= 7 && hunger <= 3 && health >= 7) {
                 emoji.innerText = '😄';  // Very Happy
             } else if (happiness >= 4) {
                 emoji.innerText = '😊';  // Happy
             } else if (hunger >= 7) {
                 emoji.innerText = '😞';  // Hungry
+            } else if (health <= 3) {
+                emoji.innerText = '😟';  // Sick
             } else {
                 emoji.innerText = '😐';  // Neutral
             }
@@ -100,6 +115,9 @@
             }
             if (happiness > 0) {
                 happiness--;
+            }
+            if (health > 0) {
+                health--;
             }
             updateStats();
         }, 5000);
