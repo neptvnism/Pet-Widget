@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tamaemoji</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+        }
+        .tamaemoji {
+            margin: 20px auto;
+            padding: 20px;
+            width: 300px;
+            border: 2px solid #333;
+            border-radius: 10px;
+            background-color: #fff;
+        }
+        .stats {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        .buttons button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .buttons button:focus {
+            outline: none;
+        }
+        .emoji {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="tamaemoji">
+        <h1>Tamaemoji</h1>
+        <div class="emoji" id="emoji">😐</div>
+        <div class="stats">
+            <div>Hunger: <span id="hunger">5</span></div>
+            <div>Happiness: <span id="happiness">5</span></div>
+        </div>
+        <div class="buttons">
+            <button onclick="feed()">Feed</button>
+            <button onclick="play()">Play</button>
+        </div>
+    </div>
+
+    <script>
+        let hunger = 5;
+        let happiness = 5;
+
+        function updateStats() {
+            document.getElementById('hunger').innerText = hunger;
+            document.getElementById('happiness').innerText = happiness;
+            updateEmoji();
+        }
+
+        function feed() {
+            if (hunger > 0) {
+                hunger--;
+                updateStats();
+            } else {
+                alert("Your Tamaemoji is not hungry!");
+            }
+        }
+
+        function play() {
+            if (happiness < 10) {
+                happiness++;
+                updateStats();
+            } else {
+                alert("Your Tamaemoji is already very happy!");
+            }
+        }
+
+        function updateEmoji() {
+            const emoji = document.getElementById('emoji');
+            if (happiness >= 7 && hunger <= 3) {
+                emoji.innerText = '😄';  // Very Happy
+            } else if (happiness >= 4) {
+                emoji.innerText = '😊';  // Happy
+            } else if (hunger >= 7) {
+                emoji.innerText = '😞';  // Hungry
+            } else {
+                emoji.innerText = '😐';  // Neutral
+            }
+        }
+
+        setInterval(() => {
+            if (hunger < 10) {
+                hunger++;
+            }
+            if (happiness > 0) {
+                happiness--;
+            }
+            updateStats();
+        }, 5000);
+
+        // Initial update
+        updateEmoji();
+    </script>
+</body>
+</html>
