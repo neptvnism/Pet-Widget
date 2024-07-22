@@ -62,33 +62,6 @@
             margin-bottom: 20px;
             position: relative;
         }
-        .accessory {
-            position: absolute;
-            font-size: 40px;
-        }
-        .bowtie {
-            top: -25px;
-            left: 45px;
-            transform: rotate(-15deg);
-        }
-        .hat {
-            top: -20px;
-            left: 10px;
-        }
-        .glasses {
-            top: 15px;
-            left: 10px;
-            font-size: 50px;
-        }
-        .accessories {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .accessories button {
-            font-size: 24px;
-        }
     </style>
 </head>
 <body>
@@ -96,9 +69,6 @@
         <h1>Tamaemoji</h1>
         <div class="emoji-container">
             <div class="emoji" id="emoji">😐</div>
-            <div class="accessory bowtie" id="bowtie" style="display: none;">🎀</div>
-            <div class="accessory hat" id="hat" style="display: none;">🎩</div>
-            <div class="accessory glasses" id="glasses" style="display: none;">👓</div>
         </div>
         <div class="stats">
             <div>Fullness:
@@ -121,11 +91,6 @@
             <button onclick="feed()">Feed</button>
             <button onclick="play()">Play</button>
             <button onclick="sleep()">Sleep</button>
-        </div>
-        <div class="accessories">
-            <button onclick="addAccessory('bowtie')">🎀</button>
-            <button onclick="addAccessory('hat')">🎩</button>
-            <button onclick="addAccessory('glasses')">👓</button>
         </div>
     </div>
 
@@ -168,33 +133,19 @@
             updateStats();
         }
 
-        function addAccessory(selectedAccessory) {
-            document.getElementById('bowtie').style.display = 'none';
-            document.getElementById('hat').style.display = 'none';
-            document.getElementById('glasses').style.display = 'none';
-            
-            if (selectedAccessory === 'bowtie') {
-                document.getElementById('bowtie').style.display = 'block';
-            } else if (selectedAccessory === 'hat') {
-                document.getElementById('hat').style.display = 'block';
-            } else if (selectedAccessory === 'glasses') {
-                document.getElementById('glasses').style.display = 'block';
-            }
-        }
-
         function updateEmoji() {
             const emoji = document.getElementById('emoji');
-            if (happiness >= 7 && fullness <= 3 && health >= 7) {
+            if (happiness >= 7 && fullness >= 7 && health >= 7) {
                 emoji.innerText = '😄';  // Very Happy
-            } else if (happiness >= 6 && fullness <= 4 && health >= 6) {
+            } else if (happiness >= 5 && fullness >= 5 && health >= 5) {
                 emoji.innerText = '😊';  // Happy
-            } else if (happiness >= 4 && fullness <= 6 && health >= 5) {
+            } else if (happiness >= 3 && fullness >= 3 && health >= 3) {
                 emoji.innerText = '🙂';  // Content
-            } else if (fullness >= 7) {
+            } else if (fullness < 3) {
                 emoji.innerText = '😞';  // Hungry
-            } else if (health <= 3) {
+            } else if (health < 3) {
                 emoji.innerText = '😟';  // Sick
-            } else if (fullness <= 3 && happiness <= 3) {
+            } else if (happiness < 3) {
                 emoji.innerText = '😢';  // Sad
             } else {
                 emoji.innerText = '😐';  // Neutral
@@ -202,8 +153,8 @@
         }
 
         setInterval(() => {
-            if (fullness < 10) {
-                fullness++;
+            if (fullness > 0) {
+                fullness--;
             }
             if (happiness > 0) {
                 happiness--;
@@ -215,7 +166,7 @@
         }, 5000);
 
         // Initial update
-        updateEmoji();
+        updateStats(); // Ensure the emoji and stats are updated initially
     </script>
 </body>
 </html>
