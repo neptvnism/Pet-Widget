@@ -98,13 +98,25 @@
             </div>
         </div>
         <div class="interactables">
+            <!-- Food Row -->
             <div draggable="true" class="food" ondragstart="drag(event)">🍏</div>
             <div draggable="true" class="food" ondragstart="drag(event)">🍔</div>
             <div draggable="true" class="food" ondragstart="drag(event)">🍣</div>
+            <div draggable="true" class="food" ondragstart="drag(event)">🍕</div>
+            <div draggable="true" class="food" ondragstart="drag(event)">🍪</div>
+            <div draggable="true" class="food" ondragstart="drag(event)">🍉</div>
+            <!-- Toys Row -->
             <div draggable="true" class="toy" ondragstart="drag(event)">⚽</div>
             <div draggable="true" class="toy" ondragstart="drag(event)">🧸</div>
             <div draggable="true" class="toy" ondragstart="drag(event)">🚗</div>
+            <div draggable="true" class="toy" ondragstart="drag(event)">🎮</div>
+            <div draggable="true" class="toy" ondragstart="drag(event)">🎲</div>
+            <!-- Health Items Row -->
             <div draggable="true" class="sleep" ondragstart="drag(event)">🛏️</div>
+            <div draggable="true" class="health" ondragstart="drag(event)">🚽</div>
+            <div draggable="true" class="health" ondragstart="drag(event)">🛁</div>
+            <div draggable="true" class="health" ondragstart="drag(event)">💊</div>
+            <div draggable="true" class="health" ondragstart="drag(event)">🩹</div>
         </div>
     </div>
 
@@ -137,6 +149,8 @@
                 play();
             } else if (data === "sleep") {
                 sleep();
+            } else if (data === "health") {
+                heal();
             }
         }
 
@@ -144,7 +158,6 @@
             animateEmoji('😋', () => {
                 if (fullness < 10) {
                     fullness++;
-                    health = Math.min(10, health + 1); // Increase health slightly
                     updateStats();
                 } else {
                     alert("Your Tamaemoji is already full!");
@@ -156,7 +169,6 @@
             animateEmoji('😆', () => {
                 if (happiness < 10) {
                     happiness++;
-                    health = Math.min(10, health + 1); // Increase health slightly
                     updateStats();
                 } else {
                     alert("Your Tamaemoji is already very happy!");
@@ -177,6 +189,17 @@
             });
         }
 
+        function heal() {
+            animateEmoji('😌', () => {
+                if (health < 10) {
+                    health++;
+                    updateStats();
+                } else {
+                    alert("Your Tamaemoji is already very healthy!");
+                }
+            });
+        }
+
         function animateEmoji(tempEmoji, callback) {
             const emoji = document.getElementById('emoji');
             emoji.innerText = tempEmoji;
@@ -190,7 +213,9 @@
 
         function updateEmoji() {
             const emoji = document.getElementById('emoji');
-            if (happiness >= 7 && fullness >= 7 && health >= 7) {
+            if (fullness === 0 && happiness === 0 && health === 0) {
+                emoji.innerText = '💀';  // Dead
+            } else if (happiness >= 7 && fullness >= 7 && health >= 7) {
                 emoji.innerText = '😄';  // Very Happy
             } else if (happiness >= 5 && fullness >= 5 && health >= 5) {
                 emoji.innerText = '😊';  // Happy
