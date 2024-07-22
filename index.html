@@ -67,6 +67,31 @@
         .interactables div:active {
             cursor: grabbing;
         }
+        .settings-btn {
+            font-size: 20px;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+        .settings-menu {
+            display: none;
+            position: absolute;
+            top: 40px;
+            right: 10px;
+            background-color: white;
+            border: 1px solid #333;
+            padding: 10px;
+            border-radius: 5px;
+            width: 200px;
+        }
+        .settings-menu label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        .settings-menu input[type="button"] {
+            margin-top: 10px;
+        }
         @keyframes wiggle {
             0%, 100% { transform: rotate(0deg); }
             25% { transform: rotate(5deg); }
@@ -112,11 +137,18 @@
             <div draggable="true" class="toy" ondragstart="drag(event)">🎮</div>
             <div draggable="true" class="toy" ondragstart="drag(event)">🎲</div>
             <!-- Health Items Row -->
-            <div draggable="true" class="sleep" ondragstart="drag(event)">🛏️</div>
+            <div draggable="true" class="health" ondragstart="drag(event)">🛏️</div>
             <div draggable="true" class="health" ondragstart="drag(event)">🚽</div>
             <div draggable="true" class="health" ondragstart="drag(event)">🛁</div>
             <div draggable="true" class="health" ondragstart="drag(event)">💊</div>
             <div draggable="true" class="health" ondragstart="drag(event)">🩹</div>
+        </div>
+        <div class="settings-btn" onclick="toggleSettings()">⚙️</div>
+        <div class="settings-menu" id="settings-menu">
+            <label>Option 1: <input type="checkbox"></label>
+            <label>Option 2: <input type="checkbox"></label>
+            <label>Option 3: <input type="checkbox"></label>
+            <input type="button" value="Close" onclick="toggleSettings()">
         </div>
     </div>
 
@@ -229,6 +261,15 @@
                 emoji.innerText = '😢';  // Sad
             } else {
                 emoji.innerText = '😐';  // Neutral
+            }
+        }
+
+        function toggleSettings() {
+            const menu = document.getElementById('settings-menu');
+            if (menu.style.display === 'none' || menu.style.display === '') {
+                menu.style.display = 'block';
+            } else {
+                menu.style.display = 'none';
             }
         }
 
