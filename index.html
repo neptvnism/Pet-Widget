@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tamaemoji</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Press Start 2P', cursive;
             text-align: center;
             background-color: #f0f0f0;
         }
@@ -23,7 +25,7 @@
             margin-bottom: 20px;
         }
         .stats div {
-            font-size: 20px;
+            font-size: 16px;
             margin-bottom: 10px;
         }
         .stats .bar {
@@ -50,6 +52,7 @@
             font-size: 80px;
             margin-bottom: 20px;
             position: relative;
+            transition: all 0.5s;
         }
         .interactables {
             display: flex;
@@ -63,6 +66,11 @@
         }
         .interactables div:active {
             cursor: grabbing;
+        }
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(5deg); }
+            75% { transform: rotate(-5deg); }
         }
     </style>
 </head>
@@ -133,30 +141,51 @@
         }
 
         function feed() {
-            if (fullness < 10) {
-                fullness++;
-                health = Math.min(10, health + 1); // Increase health slightly
-                updateStats();
-            } else {
-                alert("Your Tamaemoji is already full!");
-            }
+            animateEmoji('😋', () => {
+                if (fullness < 10) {
+                    fullness++;
+                    health = Math.min(10, health + 1); // Increase health slightly
+                    updateStats();
+                } else {
+                    alert("Your Tamaemoji is already full!");
+                }
+            });
         }
 
         function play() {
-            if (happiness < 10) {
-                happiness++;
-                health = Math.min(10, health + 1); // Increase health slightly
-                updateStats();
-            } else {
-                alert("Your Tamaemoji is already very happy!");
-            }
+            animateEmoji('😆', () => {
+                if (happiness < 10) {
+                    happiness++;
+                    health = Math.min(10, health + 1); // Increase health slightly
+                    updateStats();
+                } else {
+                    alert("Your Tamaemoji is already very happy!");
+                }
+            });
         }
 
         function sleep() {
-            happiness = Math.min(10, happiness + 2); // Increase happiness slightly
-            fullness = Math.min(10, fullness + 1); // Increase fullness slightly
-            health = Math.min(10, health + 1); // Increase health slightly
-            updateStats();
+            animateEmoji('🥱', () => {
+                setTimeout(() => {
+                    animateEmoji('😴', () => {
+                        happiness = Math.min(10, happiness + 2); // Increase happiness slightly
+                        fullness = Math.min(10, fullness + 1); // Increase fullness slightly
+                        health = Math.min(10, health + 1); // Increase health slightly
+                        updateStats();
+                    });
+                }, 1000);
+            });
+        }
+
+        function animateEmoji(tempEmoji, callback) {
+            const emoji = document.getElementById('emoji');
+            emoji.innerText = tempEmoji;
+            emoji.style.animation = 'wiggle 0.5s';
+            setTimeout(() => {
+                emoji.style.animation = '';
+                callback();
+                updateEmoji();
+            }, 500);
         }
 
         function updateEmoji() {
