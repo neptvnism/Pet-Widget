@@ -42,17 +42,6 @@
             width: 0;
             border-radius: 10px;
         }
-        .buttons button {
-            padding: 10px 20px;
-            font-size: 16px;
-            margin: 5px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .buttons button:focus {
-            outline: none;
-        }
         .emoji-container {
             position: relative;
             display: inline-block;
@@ -61,6 +50,19 @@
             font-size: 80px;
             margin-bottom: 20px;
             position: relative;
+        }
+        .interactables {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .interactables div {
+            font-size: 40px;
+            margin: 5px;
+            cursor: grab;
+        }
+        .interactables div:active {
+            cursor: grabbing;
         }
     </style>
 </head>
@@ -87,10 +89,14 @@
                 </div>
             </div>
         </div>
-        <div class="buttons">
-            <button onclick="feed()">Feed</button>
-            <button onclick="play()">Play</button>
-            <button onclick="sleep()">Sleep</button>
+        <div class="interactables">
+            <div draggable="true" class="food" ondragstart="drag(event)">🍏</div>
+            <div draggable="true" class="food" ondragstart="drag(event)">🍔</div>
+            <div draggable="true" class="food" ondragstart="drag(event)">🍣</div>
+            <div draggable="true" class="toy" ondragstart="drag(event)">⚽</div>
+            <div draggable="true" class="toy" ondragstart="drag(event)">🧸</div>
+            <div draggable="true" class="toy" ondragstart="drag(event)">🚗</div>
+            <div draggable="true" class="sleep" ondragstart="drag(event)">🛏️</div>
         </div>
     </div>
 
@@ -104,6 +110,26 @@
             document.getElementById('happiness-bar').style.width = happiness * 10 + '%';
             document.getElementById('health-bar').style.width = health * 10 + '%';
             updateEmoji();
+        }
+
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
+
+        function drag(ev) {
+            ev.dataTransfer.setData("text", ev.target.className);
+        }
+
+        function drop(ev) {
+            ev.preventDefault();
+            let data = ev.dataTransfer.getData("text");
+            if (data === "food") {
+                feed();
+            } else if (data === "toy") {
+                play();
+            } else if (data === "sleep") {
+                sleep();
+            }
         }
 
         function feed() {
@@ -166,7 +192,10 @@
         }, 5000);
 
         // Initial update
-        updateStats(); // Ensure the emoji and stats are updated initially
+        updateStats();
+
+        document.querySelector('.emoji-container').addEventListener('dragover', allowDrop);
+        document.querySelector('.emoji-container').addEventListener('drop', drop);
     </script>
 </body>
 </html>
