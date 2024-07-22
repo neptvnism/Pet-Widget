@@ -6,6 +6,8 @@
     <title>Tamaemoji</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
 
         body {
             font-family: 'Press Start 2P', cursive;
@@ -84,13 +86,15 @@
             padding: 10px;
             border-radius: 5px;
             width: 200px;
+            z-index: 10;
         }
         .settings-menu label {
             display: block;
             margin-bottom: 10px;
         }
-        .settings-menu input[type="button"] {
-            margin-top: 10px;
+        .settings-menu select, .settings-menu input[type="range"], .settings-menu input[type="button"] {
+            margin-bottom: 10px;
+            width: 100%;
         }
         @keyframes wiggle {
             0%, 100% { transform: rotate(0deg); }
@@ -145,17 +149,32 @@
         </div>
         <div class="settings-btn" onclick="toggleSettings()">⚙️</div>
         <div class="settings-menu" id="settings-menu">
-            <label>Option 1: <input type="checkbox"></label>
-            <label>Option 2: <input type="checkbox"></label>
-            <label>Option 3: <input type="checkbox"></label>
+            <label for="font-select">Change Font:</label>
+            <select id="font-select" onchange="changeFont(this.value)">
+                <option value="'Press Start 2P', cursive">Pixelated</option>
+                <option value="'Courier Prime', monospace">Courier</option>
+                <option value="'Roboto Mono', monospace">Roboto Mono</option>
+            </select>
+            <label for="fullness-rate">Fullness Decrease Rate:</label>
+            <input type="range" id="fullness-rate" min="1" max="10" value="1" onchange="changeDecreaseRate('fullness', this.value)">
+            <label for="happiness-rate">Happiness Decrease Rate:</label>
+            <input type="range" id="happiness-rate" min="1" max="10" value="1" onchange="changeDecreaseRate('happiness', this.value)">
+            <label for="health-rate">Health Decrease Rate:</label>
+            <input type="range" id="health-rate" min="1" max="10" value="1" onchange="changeDecreaseRate('health', this.value)">
             <input type="button" value="Close" onclick="toggleSettings()">
         </div>
     </div>
 
     <script>
-        let fullness = 5;
-        let happiness = 5;
-        let health = 5;
+        let fullness = 10;
+        let happiness = 10;
+        let health = 10;
+
+        let decreaseRates = {
+            fullness: 1,
+            happiness: 1,
+            health: 1
+        };
 
         function updateStats() {
             document.getElementById('fullness-bar').style.width = fullness * 10 + '%';
@@ -179,21 +198,18 @@
                 feed();
             } else if (data === "toy") {
                 play();
-            } else if (data === "sleep") {
-                sleep();
             } else if (data === "health") {
-                heal();
+                if (ev.target.innerText === "🛏️") {
+                    sleep();
+                } else {
+                    heal();
+                }
             }
         }
 
         function feed() {
             animateEmoji('😋', () => {
-                if (fullness < 10) {
-                    fullness++;
-                    updateStats();
-                } else {
-                    alert("Your Tamaemoji is already full!");
-                }
+                // Feeding does not increase the stats now
             });
         }
 
@@ -212,85 +228,115 @@
             animateEmoji('🥱', () => {
                 setTimeout(() => {
                     animateEmoji('😴', () => {
-                        happiness = Math.min(10, happiness + 2); // Increase happiness slightly
                         fullness = Math.min(10, fullness + 1); // Increase fullness slightly
-                        health = Math.min(10, health + 1); // Increase health slightly
+                        happiness = Math.min(10, happiness + 2); // Increase happiness slightly
+                        health = Math.min(10, health + 2); // Increase health slightly
                         updateStats();
                     });
                 }, 1000);
             });
         }
 
-        function heal() {
-            animateEmoji('😌', () => {
-                if (health < 10) {
-                    health++;
-                    updateStats();
+            function heal() {
+                animateEmoji('😊', () => {
+                    if (health < 10) {
+                        health++;
+                        updateStats();
+                    } else {
+                        alert("Your Tamaemoji is already in perfect health!");
+                    }
+                });
+            }
+
+            function animateEmoji(tempEmoji, callback) {
+                const emoji = document.getElementById('emoji');
+                const originalEmoji = emoji.innerText;
+                emoji.innerText = tempEmoji;
+                emoji.style.animation = 'wiggle 0.5s';
+                setTimeout(() => {
+                    emoji.style.animation = '';
+                    callback();
+                    setTimeout(() => {
+                        updateEmoji();
+                    }, 500);
+                }, 500);
+            }
+
+            function updateEmoji() {
+                const emoji = document.getElementById('emoji');
+                if (fullness <= 0 && happiness <= 0 && health <= 0) {
+                    emoji.innerText = '💀';  // Dead
+                } else if (fullness < 3) {
+                    emoji.innerText = '😞';  // Hungry
+                } else if (health < 3) {
+                    emoji.innerText = '😟';  // Sick
+                } else if (happiness < 3) {
+                    emoji.innerText = '😢';  // Sad
                 } else {
-                    alert("Your Tamaemoji is already very healthy!");
+                    emoji.innerText = '😊';  // Happy
                 }
-            });
-        }
+            }
 
-        function animateEmoji(tempEmoji, callback) {
-            const emoji = document.getElementById('emoji');
-            emoji.innerText = tempEmoji;
-            emoji.style.animation = 'wiggle 0.5s';
-            setTimeout(() => {
-                emoji.style.animation = '';
-                callback();
-                updateEmoji();
-            }, 500);
-        }
+            function toggleSettings() {
+                const menu = document.getElementById('settings-menu');
+                menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+            }
 
-        function updateEmoji() {
-            const emoji = document.getElementById('emoji');
-            if (fullness === 0 && happiness === 0 && health === 0) {
-                emoji.innerText = '💀';  // Dead
-            } else if (happiness >= 7 && fullness >= 7 && health >= 7) {
-                emoji.innerText = '😄';  // Very Happy
-            } else if (happiness >= 5 && fullness >= 5 && health >= 5) {
-                emoji.innerText = '😊';  // Happy
-            } else if (happiness >= 3 && fullness >= 3 && health >= 3) {
-                emoji.innerText = '🙂';  // Content
-            } else if (fullness < 3) {
-                emoji.innerText = '😞';  // Hungry
-            } else if (health < 3) {
-                emoji.innerText = '😟';  // Sick
-            } else if (happiness < 3) {
-                emoji.innerText = '😢';  // Sad
-            } else {
-                emoji.innerText = '😐';  // Neutral
+            function changeFont(font) {
+                document.body.style.fontFamily = font;
             }
-        }
 
-        function toggleSettings() {
-            const menu = document.getElementById('settings-menu');
-            if (menu.style.display === 'none' || menu.style.display === '') {
-                menu.style.display = 'block';
-            } else {
-                menu.style.display = 'none';
+            function changeDecreaseRate(stat, rate) {
+                decreaseRates[stat] = parseInt(rate);
             }
-        }
 
-        setInterval(() => {
-            if (fullness > 0) {
-                fullness--;
-            }
-            if (happiness > 0) {
-                happiness--;
-            }
-            if (health > 0) {
-                health--;
-            }
+            setInterval(() => {
+                if (fullness > 0) {
+                    fullness -= decreaseRates.fullness / 10;
+                }
+                if (happiness > 0) {
+                    happiness -= decreaseRates.happiness / 10;
+                }
+                if (health > 0) {
+                    health -= decreaseRates.health / 10;
+                }
+                updateStats();
+            }, 2000); // Slowed down to 2 seconds interval
+
+            // Initial update
             updateStats();
-        }, 5000);
 
-        // Initial update
-        updateStats();
+            document.querySelector('.emoji-container').addEventListener('dragover', allowDrop);
+            document.querySelector('.emoji-container').addEventListener('drop', drop);
 
-        document.querySelector('.emoji-container').addEventListener('dragover', allowDrop);
-        document.querySelector('.emoji-container').addEventListener('drop', drop);
-    </script>
-</body>
-</html>
+            // Functions for different interactions
+            function feed() {
+                animateEmoji('😋', () => {
+                    fullness = Math.min(10, fullness + 1);
+                    updateStats();
+                });
+            }
+
+            function play() {
+                animateEmoji('😆', () => {
+                    happiness = Math.min(10, happiness + 1);
+                    updateStats();
+                });
+            }
+
+            function sleep() {
+                animateEmoji('🥱', () => {
+                    setTimeout(() => {
+                        animateEmoji('😴', () => {
+                            fullness = Math.min(10, fullness + 1); // Increase fullness slightly
+                            happiness = Math.min(10, happiness + 2); // Increase happiness slightly
+                            health = Math.min(10, health + 2); // Increase health slightly
+                            updateStats();
+                        });
+                    }, 1000);
+                });
+            }
+
+            </script>
+            </body>
+            </html>
